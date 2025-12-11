@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  password  String    // Hash da senha (Bcrypt)
+  name      String
+  avatar    String?   // Nome do arquivo da imagem (ex: "avatar-123.jpg")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  folders   Folder[]
+  trackers  Tracker[]
+}
+
+model Folder {
+  id        Int      @id @default(autoincrement())
+  title     String
+  emoji     String?  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  notes     Note[]
+}
+
+model Note {
+  id        Int      @id @default(autoincrement())
+  title     String
+  body      String   @db.Text 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  folderId  Int
+  folder    Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
+}
+
+model Tracker {
+  id              Int      @id @default(autoincrement())
+  title           String   // Ex: "Dinheiro Guardado", "Copos d'água"
+  
+  value           Float    @default(0) // Valor atual. Float aceita 10.50 e 10.
+  
+  isCurrency      Boolean  @default(false) // Front: Se true, adiciona "R$" na frente.
+  isInteger       Boolean  @default(false) // Back: Se true, proíbe salvar 1.5.
+  stepValue       Float    @default(1)     // Front/Back: Quanto soma ao clicar no botão "+" (ex: 0.5, 1, 100).
+  interactionType String   @default("button") // Front: "button" (+/-) ou "manual" (input de texto).
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  userId          Int
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
