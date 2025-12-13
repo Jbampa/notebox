@@ -33,6 +33,16 @@ export const findUser = async (email: string) => {
     return result
 }
 
+export const findUserById = async (id: number) => {
+    const result = prisma.user.findUnique({
+        where: {
+            id: id
+        }
+    })
+
+    return result
+}
+
 export const authenticateUser = async (email: string, password: string) => {
 
     const user: User | null = await findUser(email);
