@@ -19,7 +19,7 @@ export const createFolderController: RequestHandler = async (req, res) => {
             folder
         })
     } catch(err) {
-        
+
         if(err instanceof AppError){
             return res.status(err.statusCode).json({
                 err: err.message
@@ -64,26 +64,37 @@ export const deleteFolderController: RequestHandler = async (req, res) => {
 
 }
 
-// export const updateFolderController: RequestHandler = (req, res) => {
-//     try {
-//         const {id} = req.params;
-//         const folderId = Number(id);
-//         const userId = (req.user as any).id
+export const updateFolderController: RequestHandler = async (req, res) => {
+    try {
 
-//         if (isNaN(folderId)) {
-//             return res.status(400).json({ error: "Invalid ID provided" });
-//         }
+        const {title, emoji} = req.body;
+        const {id} = req.params;
+        const folderId = Number(id);
+        const userId = (req.user as any).id
 
-//         const post =  await updateFolder({
-//             id: folderId,
-//             userId: userId,
-//             title:  
-//         })
+        if (isNaN(folderId)) {
+            return res.status(400).json({ error: "Invalid ID provided" });
+        }
+
+        const post =  await updateFolder({
+            id: folderId,
+            userId: userId,
+            title: title,
+            emoji: emoji 
+        })
         
-//     } catch (err) {
-//         res.status(500).json({
-//             err: err
-//         })
-//     }
+        return res.status(200).json(post);
 
-// }
+    } catch (err) {
+        if(err instanceof AppError){
+            return res.status(err.statusCode).json({
+                err: err.message
+            })
+        }
+
+        res.status(500).json({
+            err: err
+        })
+    }
+
+}

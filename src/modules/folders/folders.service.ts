@@ -69,7 +69,9 @@ type UpdateFolderDTO = {
 }
 
 export const updateFolder = async ({id, userId, title, emoji}: UpdateFolderDTO) => {
-    const folder = findFolder(id, userId)
+    const folder = await findFolder(id, userId)
+
+    console.log(folder);
 
     if(!folder) {
         throw new AppError('Folder not found or access denied');
