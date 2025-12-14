@@ -2,7 +2,7 @@ import { User } from "@prisma/client";
 import { RequestHandler } from "express";
 import passport from "passport";
 
-export const jwtMiddleware: RequestHandler = (req, res, next) => {
+export const isAutenticated: RequestHandler = (req, res, next) => {
     const authStrategy = passport.authenticate('jwt', (err: any, response: Omit<User, "password">, info: any) => {
         if(err) {
             return next(err)

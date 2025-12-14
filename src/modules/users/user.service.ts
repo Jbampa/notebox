@@ -12,6 +12,12 @@ export const encryptPassword = async (password: string) => {
 export const createUser = async (user: Prisma.UserCreateInput) => {
     const encryptedPassword = await encryptPassword(user.password);
 
+    const userExists = await findUser(user.email);
+
+    if(userExists) {
+        throw new AppError('Email already exists');
+    }
+
     const result = await prisma.user.create({
         data: {
             name: user.name,
@@ -24,7 +30,7 @@ export const createUser = async (user: Prisma.UserCreateInput) => {
 }
 
 export const findUser = async (email: string) => {
-    const result = prisma.user.findUnique({
+    const result = await prisma.user.findUnique({
         where: {
             email: email
         }
@@ -34,7 +40,7 @@ export const findUser = async (email: string) => {
 }
 
 export const findUserById = async (id: number) => {
-    const result = prisma.user.findUnique({
+    const result = await prisma.user.findUnique({
         where: {
             id: id
         }

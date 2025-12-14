@@ -7,6 +7,8 @@ export const authSignupController: RequestHandler = async (req, res) => {
     try {
         const user = await createUser(req.body);
 
+        console.log('chegou aqui');
+
         const response = {
             user: {
                 id: user.id,
@@ -15,11 +17,19 @@ export const authSignupController: RequestHandler = async (req, res) => {
             },
         }
 
+        console.log(response);
+
         res.status(201).json({
             response
         })
     } catch(error) {
-        console.log(error);
+        if(error instanceof AppError){
+            return res.status(error.statusCode).json({
+                err: error.message
+            })
+        }
+
+
         return res.status(500).json({
             message: 'An internal server occurred '
         })
@@ -56,5 +66,6 @@ export const authSigninController: RequestHandler = async (req, res) => {
                 error: "An internal server error occurred"
             }
         )
+
     }
 }
