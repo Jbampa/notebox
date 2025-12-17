@@ -31,7 +31,7 @@ export const authSignupController: RequestHandler = async (req, res) => {
 
 
         return res.status(500).json({
-            message: 'An internal server occurred '
+            message: 'An internal server error occurred'
         })
     }
 
