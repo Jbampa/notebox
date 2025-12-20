@@ -69,3 +69,9 @@ export const authSigninController: RequestHandler = async (req, res) => {
 
     }
 }
+
+export const authValidateController: RequestHandler = async (req, res) => {
+    res.status(200).json({
+        user: req.user
+    }) 
+}

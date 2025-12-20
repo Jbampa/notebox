@@ -3,17 +3,19 @@ import routes from './shared/http/routes';
 import helmet from 'helmet';
 import passport from 'passport';
 import { strategy } from './shared/utils/passport';
+import cors from 'cors';
 
 const port = process.env.PORT
 
 const server = express();
 
+server.use(cors());
 server.use(passport.initialize());
-server.use(helmet())
+server.use(helmet());
 server.use(express.json());
-passport.use('jwt', strategy)
+passport.use('jwt', strategy);
 
-server.use('/', routes)
+server.use('/', routes);
 
 server.listen(port, () => {
     console.log(`Server running at: http://localhost:${port}`)

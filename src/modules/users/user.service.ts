@@ -41,12 +41,18 @@ export const findUser = async (email: string) => {
 
 export const findUserById = async (id: number) => {
     const result = await prisma.user.findUnique({
-        where: {
-            id: id
+        where: { id: id },
+        select: {
+            id: true,
+            email: true,
+            name: true,
+            avatar: true,
+            createdAt: true,
+            updatedAt: true,
         }
     })
 
-    return result
+    return result;
 }
 
 export const authenticateUser = async (email: string, password: string) => {
@@ -65,8 +71,10 @@ export const authenticateUser = async (email: string, password: string) => {
 
     const jwtToken = createJwt(user.id);
 
+    const { password: _, ...userWithoutPassword } = user;
+
     return {
-        user, 
+        user: userWithoutPassword, 
         token: jwtToken
     }
 
