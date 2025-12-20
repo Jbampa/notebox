@@ -46,14 +46,13 @@ model Note {
 
 model Tracker {
   id              Int      @id @default(autoincrement())
-  title           String   // Ex: "Dinheiro Guardado", "Copos d'água"
+  title           String   
   
-  value           Float    @default(0) // Valor atual. Float aceita 10.50 e 10.
+  value           Float    @default(0)
   
-  isCurrency      Boolean  @default(false) // Front: Se true, adiciona "R$" na frente.
-  isInteger       Boolean  @default(false) // Back: Se true, proíbe salvar 1.5.
-  stepValue       Float    @default(1)     // Front/Back: Quanto soma ao clicar no botão "+" (ex: 0.5, 1, 100).
-  interactionType String   @default("button") // Front: "button" (+/-) ou "manual" (input de texto).
+  isCurrency      Boolean  @default(false)
+  isInteger       Boolean  @default(false) 
+  stepValue       Float    @default(1)     
 
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt

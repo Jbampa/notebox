@@ -27,17 +27,14 @@ export const createNote = async ({title, body, userId, folderId}: createNoteDTO)
     return result;
 }
 
-export const findNote = async (folderId: number, userId: number, noteId: number) => {
-    const folder = await findFolder(folderId, userId);
+export const findNote = async (userId: number, noteId: number) => {
 
-    if(!folder) {
-        throw new AppError('Folder not found or access denied');
-    }
-
-    const result = prisma.note.findFirst({
+    const result = await prisma.note.findFirst({
         where: {
             id: noteId,
-            folderId 
+            folder: {
+                userId: userId
+            }
         }
     })
 
@@ -48,12 +45,56 @@ export const getAllNotes = async (folderId: number, userId: number) => {
     const folder = await findFolder(folderId, userId);
 
     if(!folder) {
-        throw new AppError('Folder not found or access denied')
+        throw new AppError('Folder not found or access denied', 404);
     }
 
-    const result = prisma.note.findMany({
+    const result = await prisma.note.findMany({
         where: {
             folderId: folderId
+        }
+    })
+
+    return result;
+}
+
+export const deleteNote = async (userId: number, noteId: number) => {
+
+    const note = await findNote(userId, noteId);
+
+    if(!note) {
+        throw new AppError("Note not found or access denied");
+    }
+
+    const result = await prisma.note.delete({
+        where: {
+            id: noteId
+        }
+    })
+
+    return result
+}
+
+type updateNoteDTO = {
+    userId: number,
+    noteId: number,
+    title?: string,
+    body?: string
+}
+
+export const updateNote = async ({userId, noteId, title, body}: updateNoteDTO) => {
+    const note = findNote(userId, noteId);
+
+    if(!note) {
+        throw new AppError("Note not found or access denied");
+    }
+
+    const result = await prisma.note.update({
+        data: {
+            title,
+            body
+        },
+        where: {
+            id: noteId,
         }
     })
 
