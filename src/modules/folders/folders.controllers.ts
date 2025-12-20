@@ -1,6 +1,42 @@
 import { RequestHandler } from "express";
-import { createFolder, deleteFolder, updateFolder } from "./folders.service";
+import { createFolder, deleteFolder, findFolder, listFolders, updateFolder } from "./folders.service";
 import { AppError } from "../../errors/AppError";
+
+export const getFolderController: RequestHandler = async (req, res) => {
+    try {
+        const userId = (req.user as any).id;
+        const {folderId} = req.params;
+        const folderIdAsNumber = Number(folderId)
+        const folder = await findFolder(folderIdAsNumber, userId);
+        return res.status(200).json(folder);
+    } catch(err) {
+        if (err instanceof AppError) {
+            return res.status(err.statusCode).json({
+                err: err.message
+            })
+        }
+        return res.status(500).json({
+            err: "An internal server error has occurred"
+        })
+    }
+}
+
+export const getAllFoldersController: RequestHandler = async (req, res) => {
+    try {
+        const userId = (req.user as any).id;
+        const folders = await listFolders(userId);
+        return res.status(200).json(folders);
+    } catch(err) {
+        if (err instanceof AppError) {
+            return res.status(err.statusCode).json({
+                err: err.message
+            })
+        }
+        return res.status(500).json({
+            err: "An internal server error has occurred"
+        })
+    }
+}
 
 export const createFolderController: RequestHandler = async (req, res) => {
 
