@@ -21,6 +21,7 @@ export const AuthContextProvider = ({children}: {children: ReactNode}) => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         setUser(undefined);
+        setLoading(false);
     }, []);
 
     const fetchUser = useCallback(async () => {
@@ -78,7 +79,6 @@ export const AuthContextProvider = ({children}: {children: ReactNode}) => {
     )
 }
 
-// 🛡️ SAFETY CHECK: Strict Hook
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) {

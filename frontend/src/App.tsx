@@ -1,11 +1,9 @@
-import { TestAuth } from "./components/testContext";
+import { AppRoutes } from "./routes/AppRoutes"
 
 function App() {
 
   return (
-    <>
-      <TestAuth></TestAuth>
-    </>
+    <AppRoutes></AppRoutes>
   )
 }
 
