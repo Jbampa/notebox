@@ -28,29 +28,50 @@ export const createNote = async ({title, body, userId, folderId}: createNoteDTO)
 }
 
 export const findNote = async (userId: number, noteId: number) => {
-
     const result = await prisma.note.findFirst({
         where: {
             id: noteId,
             folder: {
                 userId: userId
             }
-        }
+        }, include: {
+            folder: {
+                select: {
+                    title: true
+                }
+            }
+        },
     })
 
     return result;
 }
 
-export const getAllNotes = async (folderId: number, userId: number) => {
-    const folder = await findFolder(folderId, userId);
+export const getAllNotes = async (folderId: number | undefined, userId: number) => {
 
-    if(!folder) {
-        throw new AppError('Folder not found or access denied', 404);
+    if (folderId) {
+        const folder = await findFolder(folderId, userId);
+        if(!folder) {
+            throw new AppError('Folder not found or access denied', 404);
+        }
     }
 
     const result = await prisma.note.findMany({
         where: {
-            folderId: folderId
+            folder: {
+                userId: userId
+            },
+
+            ...(folderId ? { folderId: folderId } : {})
+        },
+        include: {
+            folder: {
+                select: {
+                    title: true
+                }
+            }
+        },
+        orderBy: {
+            createdAt: 'desc'
         }
     })
 

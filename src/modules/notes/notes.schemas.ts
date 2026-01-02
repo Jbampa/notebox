@@ -14,7 +14,7 @@ export const updateNoteSchema = z.object({
     }),
     body: z.object({
         title: z.string().max(100, {error: "Title must be fewer than 100 characters"}).optional(),
-        body: z.string()
+        body: z.string().optional()
     })
 })
 

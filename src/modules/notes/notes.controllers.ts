@@ -29,7 +29,11 @@ export const getAllNotesController: RequestHandler = async (req, res) => {
         const userId = (req.user as any).id;
         const {folderId} = req.query;
 
-        const folderIdAsNumber = Number(folderId)
+        const folderIdAsNumber = Number(folderId);
+
+        if (folderId && isNaN(folderIdAsNumber as number)) {
+             return res.status(400).json({ err: "Folder ID must be a number" });
+        }
 
         const notes = await getAllNotes(folderIdAsNumber, userId)
 
@@ -54,7 +58,7 @@ export const getNoteController: RequestHandler = async (req, res) => {
 
         const noteIdAsNumber = Number(noteId)
 
-        const note = await findNote(noteIdAsNumber, userId);
+        const note = await findNote(userId, noteIdAsNumber);
 
         return res.status(200).json(note);
     } catch(err) {

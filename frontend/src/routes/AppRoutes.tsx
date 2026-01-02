@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import { Login } from "../pages/Login";
 import { PrivateRoute } from "./PrivateRoute";
 import { Register } from "../pages/Register";
-import { Dashboard } from "../pages/Dashboard";
+import { Dashboard } from "../pages/dashboard/Dashboard";
 import { Profile } from "../pages/Profile";
 import { AppLayout } from "../layouts/AppLayouts/AppLayout";
 
