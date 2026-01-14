@@ -29,3 +29,19 @@ export const updateNote = async (
   const response = await api.patch<Note>(`/notes/${id}`, data);
   return response.data;
 };
+
+export const deleteNote = async (id: number) => {
+    const response = await api.delete(`/notes/${id}`);
+    return response.data;
+}
+
+export const createNote = async ({
+  folderId,
+  title,
+}: {
+  folderId: number;
+  title: string;
+}): Promise<Note> => {
+  const result = await api.post(`/notes`, { title, folderId });
+  return result.data;
+};

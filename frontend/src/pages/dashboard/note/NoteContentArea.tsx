@@ -3,12 +3,32 @@ import { getNote, updateNote } from "../../../services/notes";
 import type { Note } from "../../../types/notes";
 import { NoteContentItem } from "./NoteContent";
 import { useEffect, useRef, useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteNote } from "../../../services/notes";
+import { TrashIcon } from "@heroicons/react/24/outline";
+import { SectionHeader } from "../../../components/sectionHeader";
 
 type NoteContentProps = {
   selectedNoteId: number | null;
+  setSelectedNoteId: (id: number | null) => void;
 };
 
-export const NoteContentArea = ({ selectedNoteId }: NoteContentProps) => {
+export const NoteContentArea = ({ selectedNoteId, setSelectedNoteId }: NoteContentProps) => {
+
+
+  const queryClient = useQueryClient();
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteNote,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+      queryClient.invalidateQueries({ queryKey: ["note"] });
+
+      setSelectedNoteId(null)
+    },
+  });
+
+
   const {
     data: selectedNote,
     isLoading,
@@ -44,9 +64,9 @@ export const NoteContentArea = ({ selectedNoteId }: NoteContentProps) => {
       try {
         await updateNote(selectedNoteId, { body: content });
         lastSavedContentRef.current = content;
-        console.log("Nota salva automaticamente");
+        console.log("New content saved succesfully");
       } catch (err) {
-        console.error("Erro ao salvar nota", err);
+        console.error("Error while saving new content", err);
       }
     }, 5000);
 
@@ -75,7 +95,20 @@ export const NoteContentArea = ({ selectedNoteId }: NoteContentProps) => {
         wrap-break-word
       "
     >
-      <NoteContentItem
+      <button
+      onClick={() => deleteMutation.mutate(selectedNoteId!)}
+      className="
+        text-sm text-red-600
+        hover:text-red-700
+        px-2 py-1
+        rounded-md
+        hover:bg-red-50
+        transition
+      "
+    >
+      <TrashIcon className="h-5 w-5" />
+      </button>
+          <NoteContentItem
         noteContent={content}
         setNoteContent={setNoteContent}
       />

@@ -14,7 +14,7 @@ export const TestAuth = () => {
     };
 
     const forceLogin = () => {
-        userAuth?.signIn('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzY2MTgyNDI3LCJleHAiOjE3Njg3NzQ0Mjd9.ml70cdb_iJuWAE4lpZaD6JTdJ-PWGgG-GLwph6KF3BE', fakeUser)
+        userAuth?.signIn('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzY4MjQ2NzI5LCJleHAiOjE3NzA4Mzg3Mjl9.GBPPOtQ1LoOqLdFFKkTIeAe8Vrhilu0gUiZ12sHbRp0', fakeUser)
     }
 
     return (

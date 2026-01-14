@@ -1,8 +1,9 @@
 import { NotesItem } from "./NotesItem"
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Note } from "../../../types/notes";
-import { getAllNotes } from "../../../services/notes";
+import { createNote, getAllNotes } from "../../../services/notes";
 import { formatShortDate } from "../../../utils/date";
+import { SectionHeader } from "../../../components/sectionHeader";
 
 type NotesAreaProps = {
   selectedFolderId: number | null;
@@ -12,6 +13,24 @@ type NotesAreaProps = {
 
 export const NotesArea = ({ selectedFolderId, selectedNoteId, setSelectedNoteId }: NotesAreaProps) => {
 
+    const queryClient = useQueryClient()
+
+    const createNoteMutation = useMutation({
+        mutationFn: createNote,
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ["notes"]})
+        }
+    })
+
+    const handleAddNote = () => {
+        if(selectedFolderId) {
+            createNoteMutation.mutate({
+                title: "New Note",
+                folderId: selectedFolderId,
+            });
+        } else return alert('Select a folder to create a note!')
+    }
+    
     const {
         data: notes,
         isLoading, 
@@ -32,10 +51,10 @@ export const NotesArea = ({ selectedFolderId, selectedNoteId, setSelectedNoteId 
 
     return(    
         <div className="p-2 h-full overflow-auto scrollbar-modern">
-
+            <SectionHeader title="Notes" onAdd={handleAddNote}/>
             {notes?.length === 0 ? (
                 <div className="text-center text-gray-400 mt-10 text-sm">
-                    Nenhuma nota encontrada nesta pasta.
+                    No note found in this folder.
                 </div>
             ) : (
                 notes?.map((note) => (
@@ -47,7 +66,7 @@ export const NotesArea = ({ selectedFolderId, selectedNoteId, setSelectedNoteId 
                         isActive={note.id === selectedNoteId} 
                         onClick={() => setSelectedNoteId(note.id)} 
                         date={formatShortDate(note.updatedAt)} 
-                        folderName={note.folder?.title || "Sem Pasta"}
+                        folderName={note.folder?.title || "No Folder"}
                     />
                 ))
             )}

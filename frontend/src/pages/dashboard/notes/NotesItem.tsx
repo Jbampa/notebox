@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FolderIcon } from "@heroicons/react/24/outline";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateNote } from "../../../services/notes";
 
 type NotesProps = {
@@ -27,6 +27,14 @@ export const NotesItem = ({
 
   const queryClient = useQueryClient();
 
+  const { mutateAsync: updateTitle } = useMutation({
+    mutationFn: (newTitle: string) =>
+      updateNote(id, { title: newTitle }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+    },
+  });
+
   const save = async () => {
     const newTitle = value.trim();
 
@@ -37,8 +45,7 @@ export const NotesItem = ({
     }
 
     if (newTitle !== title) {
-      await updateNote(id, { title: newTitle });
-      queryClient.invalidateQueries({ queryKey: ["notes"] });
+      await updateTitle(newTitle);
     }
 
     setEditing(false);
