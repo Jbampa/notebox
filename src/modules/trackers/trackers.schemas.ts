@@ -11,7 +11,7 @@ export const createTrackerSchema = z.object({
 
 export const updateTrackerSchema = z.object({
     params: z.object({
-        trackerId: z.uuid().or(z.string())
+        trackerId: z.coerce.number().int().positive()
     }),
     body: z.object({
         title: z.string().min(1, {error: "Title must have at least 1 character"}).max(50, {error: "Title must be fewer than 50 characters"}).optional(),
@@ -24,6 +24,6 @@ export const updateTrackerSchema = z.object({
 
 export const deleteTrackerSchema = z.object({
     params: z.object ({
-        trackerId: z.uuid().or(z.string())
+        trackerId: z.coerce.number().int().positive()
     })
 })

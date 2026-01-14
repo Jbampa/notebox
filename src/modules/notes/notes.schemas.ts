@@ -10,7 +10,7 @@ export const createNoteSchema = z.object({
 
 export const updateNoteSchema = z.object({
     params: z.object({
-        noteId: z.uuid().or(z.string())
+        noteId: z.coerce.number().int().positive()
     }),
     body: z.object({
         title: z.string().max(100, {error: "Title must be fewer than 100 characters"}).optional(),
@@ -20,6 +20,6 @@ export const updateNoteSchema = z.object({
 
 export const deleteNoteSchema = z.object({
     params: z.object ({
-        noteId: z.uuid().or(z.string())
+        noteId: z.coerce.number().int().positive()
     })
 })

@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import passport from 'passport';
 import { strategy } from './shared/utils/passport';
 import cors from 'cors';
+import { startPurgeDeletedNotesJob } from "./jobs/purgeDeletedNotes.job";
 
 const port = process.env.PORT
 
@@ -16,6 +17,8 @@ server.use(express.json());
 passport.use('jwt', strategy);
 
 server.use('/', routes);
+
+startPurgeDeletedNotesJob();
 
 server.listen(port, () => {
     console.log(`Server running at: http://localhost:${port}`)

@@ -78,6 +78,39 @@ export const getAllNotes = async (folderId: number | undefined, userId: number) 
     return result;
 }
 
+export const getAllTrashNotes = async (folderId: number | undefined, userId: number) => {
+
+    if (folderId) {
+        const folder = await findFolder(folderId, userId);
+        if(!folder) {
+            throw new AppError('Folder not found or access denied', 404);
+        }
+    }
+
+    const result = await prisma.note.findMany({
+        where: {
+            deletedAt: {not: null},
+            folder: {
+                userId: userId
+            },
+
+            ...(folderId ? { folderId: folderId } : {})
+        },
+        include: {
+            folder: {
+                select: {
+                    title: true
+                }
+            }
+        },
+        orderBy: {
+            createdAt: 'desc'
+        }
+    })
+
+    return result;
+}
+
 export const deleteNote = async (userId: number, noteId: number) => {
 
     const note = await findNote(userId, noteId);
@@ -87,6 +120,46 @@ export const deleteNote = async (userId: number, noteId: number) => {
     }
 
     const result = await prisma.note.delete({
+        where: {
+            id: noteId
+        }
+    })
+
+    return result
+}
+
+export const softDeleteNote = async (userId: number, noteId: number) => {
+
+    const note = await findNote(userId, noteId);
+
+    if(!note) {
+        throw new AppError("Note not found or access denied");
+    }
+
+    const result = await prisma.note.update({
+        data: {
+            deletedAt: new Date()
+        },
+        where: {
+            id: noteId
+        }
+    })
+
+    return result
+}
+
+export const restoreNote = async (userId: number, noteId: number) => {
+
+    const note = await findNote(userId, noteId);
+
+    if(!note) {
+        throw new AppError("Note not found or access denied");
+    }
+
+    const result = await prisma.note.update({
+        data: {
+            deletedAt: null
+        },
         where: {
             id: noteId
         }
@@ -121,3 +194,4 @@ export const updateNote = async ({userId, noteId, title, body}: updateNoteDTO) =
 
     return result;
 }
+

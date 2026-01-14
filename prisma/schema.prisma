@@ -10,9 +10,9 @@ datasource db {
 model User {
   id        Int       @id @default(autoincrement())
   email     String    @unique
-  password  String    // Hash da senha (Bcrypt)
+  password  String 
   name      String
-  avatar    String?   // Nome do arquivo da imagem (ex: "avatar-123.jpg")
+  avatar    String?  
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
@@ -39,6 +39,7 @@ model Note {
   body      String   @db.Text @default("")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  deletedAt DateTime?
 
   folderId  Int
   folder    Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)

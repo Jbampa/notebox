@@ -9,7 +9,7 @@ export const createFolderSchema = z.object({
 
 export const updateFolderSchema = z.object({
     params: z.object({
-        id: z.uuid().or(z.string())
+        id: z.coerce.number().int().positive()
     }),
     body: z.object({
         title: z.string({error: 'Title is required'}).max(100, {error: "Title must be fewer than 100 characters"}),
@@ -19,6 +19,6 @@ export const updateFolderSchema = z.object({
 
 export const deleteFolderSchema = z.object({
     params: z.object({
-        id: z.uuid().or(z.string())
+        id: z.coerce.number().int().positive()
     })
 })

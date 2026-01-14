@@ -2,7 +2,6 @@ import { useState } from "react";
 import { FoldersArea } from "./folders/FoldersArea";
 import { NotesArea } from "./notes/NotesArea";
 import { NoteContentArea } from "./note/NoteContentArea";
-import { SectionHeader } from "../../components/sectionHeader";
 
 // --- Components & Icons (Extracted for readability) ---
 
