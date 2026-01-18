@@ -10,6 +10,7 @@ type NotesProps = {
   isActive: boolean;
   date: string;
   folderName: string;
+  trash?: boolean;
   onClick?: () => void;
 };
 
@@ -20,6 +21,7 @@ export const NotesItem = ({
   isActive,
   date,
   folderName,
+  trash,
   onClick,
 }: NotesProps) => {
   const [editing, setEditing] = useState(false);
@@ -55,11 +57,12 @@ export const NotesItem = ({
     <button
       onClick={!editing ? onClick : undefined}
       className={`
-        w-full text-left px-3 py-4 rounded-md
+        w-full text-left px-3 py-4 rounded-md my-0.5
         ${isActive ? "bg-gray-300 text-orange-700" : "hover:bg-gray-200"}
+        ${trash ? "border border-red-700": ""}
       `}
     >
-      <div className="flex flex-col gap-2 w-full min-w-0">
+      <div className={`flex flex-col gap-2 w-full min-w-0 `}>
         {/* TÍTULO */}
         {editing ? (
           <input

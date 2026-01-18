@@ -57,6 +57,7 @@ export const getAllNotes = async (folderId: number | undefined, userId: number) 
 
     const result = await prisma.note.findMany({
         where: {
+            deletedAt: null,
             folder: {
                 userId: userId
             },

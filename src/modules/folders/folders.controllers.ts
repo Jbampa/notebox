@@ -82,8 +82,6 @@ export const deleteFolderController: RequestHandler = async (req, res) => {
 
         const post = await deleteFolder(folderId, userId);
 
-        console.log(post);
-
         return res.status(204).send()
     } catch (err) {
 

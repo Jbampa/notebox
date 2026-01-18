@@ -6,12 +6,14 @@ import { formatShortDate } from "../../../utils/date";
 import { SectionHeader } from "../../../components/sectionHeader";
 
 type NotesAreaProps = {
-  selectedFolderId: number | null;
+  selectedFolderId: number | null | 'trash';
   selectedNoteId: number | null;
   setSelectedNoteId: (id: number) => void;
 };
 
 export const NotesArea = ({ selectedFolderId, selectedNoteId, setSelectedNoteId }: NotesAreaProps) => {
+
+    const isTrash = selectedFolderId === 'trash';
 
     const queryClient = useQueryClient()
 
@@ -23,7 +25,7 @@ export const NotesArea = ({ selectedFolderId, selectedNoteId, setSelectedNoteId 
     })
 
     const handleAddNote = () => {
-        if(selectedFolderId) {
+        if(selectedFolderId && selectedFolderId != 'trash') {
             createNoteMutation.mutate({
                 title: "New Note",
                 folderId: selectedFolderId,
@@ -66,6 +68,7 @@ export const NotesArea = ({ selectedFolderId, selectedNoteId, setSelectedNoteId 
                         isActive={note.id === selectedNoteId} 
                         onClick={() => setSelectedNoteId(note.id)} 
                         date={formatShortDate(note.updatedAt)} 
+                        trash={isTrash}
                         folderName={note.folder?.title || "No Folder"}
                     />
                 ))

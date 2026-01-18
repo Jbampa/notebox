@@ -2,15 +2,17 @@ import { useState, useRef, useEffect } from "react";
 import { FolderIcon, EllipsisHorizontalIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 type FolderProps = {
+  id?: number;
   title: string;
   isActive: boolean;
   onClick?: () => void;
-  onDelete?: () => void;
+  onDelete?: (id: number) => void;
   onRename?: (newTitle: string) => void;
+  trash?: boolean;
   hasActions?: boolean;
 };
 
-export const FolderItem = ({ title, isActive, onClick, onDelete, onRename, hasActions }: FolderProps) => {
+export const FolderItem = ({ id, title, isActive, onClick, onDelete, onRename, trash, hasActions }: FolderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(title);
@@ -19,7 +21,6 @@ export const FolderItem = ({ title, isActive, onClick, onDelete, onRename, hasAc
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        cancel()
         setIsMenuOpen(false);
       }
     };
@@ -36,6 +37,7 @@ export const FolderItem = ({ title, isActive, onClick, onDelete, onRename, hasAc
     }
 
     onRename?.(trimmed);
+    setValue(trimmed);
     setIsEditing(false);
   }
 
@@ -64,7 +66,7 @@ export const FolderItem = ({ title, isActive, onClick, onDelete, onRename, hasAc
 
       {isEditing ? (
         <div className="flex items-center gap-2 flex-1 min-w-0">
-        <FolderIcon className="h-5 w-5 shrink-0" /> 
+          {trash ? <TrashIcon className="h-5 w-5 text-red-400 group-hover:text-red-600" /> : <FolderIcon className="h-5 w-5 shrink-0" /> } 
           <input
           value={value}
           onChange={(e) => setValue(e.target.value)}
@@ -87,15 +89,13 @@ export const FolderItem = ({ title, isActive, onClick, onDelete, onRename, hasAc
         </div>
       ): 
       (<div className="flex items-center gap-2 flex-1 min-w-0 border-none">
-          <FolderIcon className="h-5 w-5 shrink-0" /> 
+          {trash ? <TrashIcon className="h-5 w-5 text-red-400 group-hover:text-red-600" /> : <FolderIcon className="h-5 w-5 shrink-0" /> }  
           <span className="truncate font-medium">
               {value}
           </span>
       </div>)
       }     
       
-
-      {/* LADO DIREITO: Menu de Opções */}
       {/* O clique aqui não deve ativar a seleção da pasta (stopPropagation) */}
       <div 
         className="relative shrink-0" 
@@ -135,7 +135,9 @@ export const FolderItem = ({ title, isActive, onClick, onDelete, onRename, hasAc
                 className="group flex w-full items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50"
                 onClick={() => {
                   setIsMenuOpen(false);
-                  onDelete?.();
+                  if(id) {
+                    onDelete?.(id);
+                  } else return;
                 }}
               >
                 <TrashIcon className="mr-3 h-4 w-4 text-red-400 group-hover:text-red-600" />

@@ -1,13 +1,16 @@
 import type { Note } from "../types/notes";
 import { api } from "./api";
 
-export const getAllNotes = async (folderId: number | null):Promise<Note[]> => {
-    const url =
-    folderId === null
-      ? "/notes"
-      : `/notes?folderId=${folderId}`;
+export const getAllNotes = async (folderId: number | null | 'trash'):Promise<Note[]> => {
+    let url: string;
 
-      const response = await api.get(url);
+    if(folderId === 'trash') {
+      url = "/notes/trash"
+    } else {
+      url = folderId === null ? "/notes" : `/notes?folderId=${folderId}`;
+    }
+
+    const response = await api.get(url);
 
     return response.data;
 }
@@ -44,4 +47,22 @@ export const createNote = async ({
 }): Promise<Note> => {
   const result = await api.post(`/notes`, { title, folderId });
   return result.data;
+};
+
+export const restoreNote = async (
+  id: number,
+): Promise<Note> => {
+
+
+  const response = await api.patch<Note>(`/notes/${id}/restore`);
+  return response.data;
+};
+
+export const softDeleteNote = async (
+  id: number,
+): Promise<Note> => {
+
+
+  const response = await api.patch<Note>(`/notes/${id}/trash`);
+  return response.data;
 };
