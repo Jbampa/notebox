@@ -7,8 +7,6 @@ export const authSignupController: RequestHandler = async (req, res) => {
     try {
         const user = await createUser(req.body);
 
-        console.log('chegou aqui');
-
         const response = {
             user: {
                 id: user.id,

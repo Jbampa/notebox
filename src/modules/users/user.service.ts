@@ -63,7 +63,7 @@ export const authenticateUser = async (email: string, password: string) => {
         throw new AppError('Invalid Email or password', 401);
     }
 
-    const isPasswordCorrect =  user ? compare(password, user.password) : false;
+    const isPasswordCorrect =  user ? await compare(password, user.password) : false;
 
     if (!isPasswordCorrect) {
         throw new AppError('Invalid Email or password', 401);

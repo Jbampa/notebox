@@ -5,6 +5,7 @@ import { Register } from "../pages/Register";
 import { Dashboard } from "../pages/dashboard/Dashboard";
 import { Profile } from "../pages/Profile";
 import { AppLayout } from "../layouts/AppLayouts/AppLayout";
+import { NotFound } from "../pages/NotFound";
 
 
 export const AppRoutes = () => {
@@ -21,6 +22,7 @@ export const AppRoutes = () => {
                     <Route path='/dashboard' element={<Dashboard/>}/>
                 </Route>
             </Route>
+            <Route path="*" element={<NotFound />} />
         </Routes>
     )
 }

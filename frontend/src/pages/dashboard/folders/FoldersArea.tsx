@@ -92,7 +92,7 @@ export const FoldersArea = ({
             </h2>
 
             <p className="text-xs text-zinc-500 mb-4">
-              This action cannot be undone. The folder and notes in it will be permanently removed.
+              This action cannot be undone. The folder and all notes in it will be permanently removed.
             </p>
 
             <div className="flex justify-end gap-2">

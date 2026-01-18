@@ -76,15 +76,28 @@ export const NoteContentArea = ({
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSavedContentRef = useRef("");
 
+  // ⚠️ Flag para ignorar autosave ao trocar de nota
+  const isInitializingRef = useRef(false);
+
+  // Carrega conteúdo ao trocar de nota
   useEffect(() => {
     if (selectedNote?.body !== undefined) {
+      isInitializingRef.current = true;
+
       setNoteContent(selectedNote.body);
       lastSavedContentRef.current = selectedNote.body;
+
+      // libera o autosave no próximo tick
+      setTimeout(() => {
+        isInitializingRef.current = false;
+      }, 0);
     }
   }, [selectedNoteId, selectedNote?.body]);
 
+  // Autosave com debounce
   useEffect(() => {
     if (!selectedNoteId) return;
+    if (isInitializingRef.current) return; // 👈 CORREÇÃO DO BUG
     if (content === lastSavedContentRef.current) return;
 
     setSaveStatus("saving");
@@ -115,11 +128,13 @@ export const NoteContentArea = ({
     };
   }, [content, selectedNoteId]);
 
-  if (isLoading)
+  if (isLoading) {
     return <div className="p-4 text-gray-400">Loading your note...</div>;
+  }
 
-  if (isError)
+  if (isError) {
     return <div className="p-4 text-red-500">Error loading note.</div>;
+  }
 
   return (
     <>
