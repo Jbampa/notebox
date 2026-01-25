@@ -3,6 +3,9 @@ import { Prisma, User } from "@prisma/client";
 import { prisma } from '../../shared/database/prisma'
 import { AppError } from "../../errors/AppError";
 import { createJwt } from "../../shared/utils/jwt";
+import fs from "fs/promises";
+import path from "path";
+import { v4 } from "uuid";
 
 export const encryptPassword = async (password: string) => {
     const hashPassword = hash(password, 8)
@@ -78,4 +81,51 @@ export const authenticateUser = async (email: string, password: string) => {
         token: jwtToken
     }
 
+}
+
+type updateUserDTO = {
+    userId: number,
+    name?: string,
+    email?: string,
+    password?: string
+    avatar?: string
+}
+
+export const updateUser = async ({userId, name, email, password, avatar}: updateUserDTO) => {
+    const result = await prisma.user.update({
+        data: {
+            name,
+            email,
+            password,
+            avatar
+        },
+        where: {
+            id: userId
+        },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            avatar: true,
+            createdAt: true,
+        }
+    })
+
+    return result;
+}
+
+export const handleAvatar = async (file: Express.Multer.File) => {
+    const allowed = ['image/jpg', 'image/jpeg', 'image/png'];
+
+    if(allowed.includes(file.mimetype)) {
+        const coverName = `${v4()}.jpg`;
+        try {      
+            await fs.rename(file.path, `./public/images/avatar/${coverName}`);
+        } catch (err) {
+            return false;
+        }
+        return coverName;
+    }
+
+    return false;
 }

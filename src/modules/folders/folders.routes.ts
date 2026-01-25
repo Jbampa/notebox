@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { createFolderController, deleteFolderController, getAllFoldersController, getFolderController, updateFolderController } from "./folders.controllers";
 import { isAutenticated } from "../../shared/http/middleware/isAutenticated";
-import { validateResource } from "../../shared/http/middleware/validateResource";
+import { validateResource } from "../../shared/http/middleware/validate";
 import { createFolderSchema, deleteFolderSchema, updateFolderSchema } from "./folders.schemas";
 
 const foldersRoutes = Router();

@@ -1,8 +1,9 @@
 import { NextFunction, RequestHandler } from "express";
-import { ZodError, ZodType } from "zod";
+import { ZodError, ZodSchema, ZodType } from "zod";
 import { AnyZodObject } from "zod/v3";
 
 export const validateResource = (zodSchema: ZodType): RequestHandler => (req, res, next) => {
+
     const result = zodSchema.safeParse({
         body: req.body,
         params: req.params,

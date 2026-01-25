@@ -6,15 +6,16 @@ import { Dashboard } from "../pages/dashboard/Dashboard";
 import { Profile } from "../pages/Profile";
 import { AppLayout } from "../layouts/AppLayouts/AppLayout";
 import { NotFound } from "../pages/NotFound";
+import { PublicRoute } from "./PublicRoute";
 
 
 export const AppRoutes = () => {
     return (
         <Routes>
-            {/* PUBLIC ROUTES */}
-            <Route path="/" element={<Login/>}/>
-            <Route path="/register" element={<Register/>}/>
-
+            <Route element={<PublicRoute/>}>
+                <Route path="/" element={<Login/>}/>
+                <Route path="/register" element={<Register/>}/>
+            </Route>
             {/* PRIVATE ROUTES */}
             <Route element={<PrivateRoute/>}>
                 <Route element={<AppLayout/>}>

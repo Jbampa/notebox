@@ -1,17 +1,24 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { EnvelopeIcon, LockClosedIcon } from "@heroicons/react/24/outline";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { login } from "../services/auth";
-import { TestAuth } from "../components/testContext";
+
+/* -------- helpers -------- */
+const isValidEmail = (email: string) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
 
 export const Login = () => {
   const { signIn } = useAuth();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const location = useLocation();
+  const showSuccess = location.state?.accountCreated;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const loginMutation = useMutation({
     mutationFn: ({ email, password }: { email: string; password: string }) =>
@@ -21,19 +28,71 @@ export const Login = () => {
       signIn(token, user);
       navigate("/dashboard", { replace: true });
     },
-    onError: () => {
 
-    }
+    onError: (error: any) => {
+      setErrorMessage(
+        error?.response?.data?.message ??
+          "Invalid email or password."
+      );
+    },
   });
+
+  const handleSubmit = () => {
+    const trimmedEmail = email.trim();
+
+    /* -------- validations -------- */
+    if (!trimmedEmail) {
+      setErrorMessage("Email is required.");
+      return;
+    }
+
+    if (!isValidEmail(trimmedEmail)) {
+      setErrorMessage("Please enter a valid email address.");
+      return;
+    }
+
+    if (!password || password.length < 4) {
+      setErrorMessage("Password must contain at least 4 characters.");
+      return;
+    }
+
+    setErrorMessage("");
+    loginMutation.mutate({ email: trimmedEmail, password });
+  };
+
+  const handleChange =
+    (setter: (value: string) => void) =>
+    (value: string) => {
+      setter(value);
+      if (errorMessage) setErrorMessage("");
+    };
 
   return (
     <div className="min-h-screen w-full bg-zinc-50 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         {/* Card */}
         <div className="bg-white border border-zinc-200 rounded-2xl shadow-sm p-6">
+          
+          {/* Success message */}
+          {showSuccess && (
+            <div className="
+              mb-4
+              rounded-lg
+              border border-green-200
+              bg-green-50
+              px-3 py-2
+              text-sm
+              text-green-700
+            ">
+              Account created successfully. You can now sign in.
+            </div>
+          )}
+
           {/* Header */}
           <div className="mb-6">
-            <h1 className="text-xl font-semibold text-zinc-900">notebox</h1>
+            <h1 className="text-xl font-semibold text-zinc-900">
+              notebox
+            </h1>
             <p className="text-sm text-zinc-500 mt-1">
               Sign in to continue to your workspace
             </p>
@@ -44,7 +103,7 @@ export const Login = () => {
             className="space-y-4"
             onSubmit={(e) => {
               e.preventDefault();
-              loginMutation.mutate({ email, password });
+              handleSubmit();
             }}
           >
             {/* Email */}
@@ -57,7 +116,9 @@ export const Login = () => {
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) =>
+                    handleChange(setEmail)(e.target.value)
+                  }
                   placeholder="you@example.com"
                   className="
                     w-full h-10
@@ -73,7 +134,6 @@ export const Login = () => {
                     focus:ring-orange-500/30
                     focus:border-orange-500
                   "
-                  required
                 />
               </div>
             </div>
@@ -88,7 +148,9 @@ export const Login = () => {
                 <input
                   type="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) =>
+                    handleChange(setPassword)(e.target.value)
+                  }
                   placeholder="••••••••"
                   className="
                     w-full h-10
@@ -104,16 +166,22 @@ export const Login = () => {
                     focus:ring-orange-500/30
                     focus:border-orange-500
                   "
-                  required
                 />
               </div>
             </div>
 
             {/* Error */}
-            {loginMutation.isError && (
-              <p className="text-xs text-red-600">
-                Invalid email or password.
-              </p>
+            {errorMessage && (
+              <div className="
+                rounded-lg
+                border border-red-200
+                bg-red-50
+                px-3 py-2
+                text-sm
+                text-red-700
+              ">
+                {errorMessage}
+              </div>
             )}
 
             {/* Submit */}
@@ -147,6 +215,7 @@ export const Login = () => {
           {/* Secondary action */}
           <button
             type="button"
+            onClick={() => navigate("/register", { replace: true })}
             className="
               w-full h-10
               rounded-md

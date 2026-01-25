@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { createTrackerController, deleteTrackerController, getAllTrackersController, getTrackerController, updateTrackerController } from "./trackers.controllers";
 import { isAutenticated } from "../../shared/http/middleware/isAutenticated";
-import { validateResource } from "../../shared/http/middleware/validateResource";
+import { validateResource } from "../../shared/http/middleware/validate";
 import { createTrackerSchema, deleteTrackerSchema, updateTrackerSchema } from "./trackers.schemas";
 
 export const trackerRoutes = Router();

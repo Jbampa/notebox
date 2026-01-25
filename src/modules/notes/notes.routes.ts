@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { createNoteController, deleteNoteController, getAllNotesController, getAllTrashNotesController, getNoteController, restoreNoteController, softDeleteNoteController, updateNoteController } from "./notes.controllers";
 import { isAutenticated } from "../../shared/http/middleware/isAutenticated";
-import { validateResource } from "../../shared/http/middleware/validateResource";
+import { validateResource } from "../../shared/http/middleware/validate";
 import { createNoteSchema, deleteNoteSchema, updateNoteSchema } from "./notes.schemas";
 
 const notesRouter = Router();

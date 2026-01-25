@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authSigninController, authSignupController, authValidateController } from './auth.controllers';
-import { validateResource } from '../../shared/http/middleware/validateResource';
+import { validateResource } from '../../shared/http/middleware/validate';
 import { signInSchema, signUpSchema } from './auth.schemas';
 import { isAutenticated } from '../../shared/http/middleware/isAutenticated';
 
