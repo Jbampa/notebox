@@ -26,3 +26,32 @@ export const validateResource = (zodSchema: ZodType): RequestHandler => (req, re
 
     next();
 } 
+
+export const validateMultipartResource = (zodSchema: ZodSchema): RequestHandler => (req, res, next) => {
+  const payload = {
+    body: {
+      ...req.body,
+      avatar: req.file ? req.file : undefined,
+    },
+    params: req.params,
+    query: req.query,
+  };
+
+  const result = zodSchema.safeParse(payload);
+
+    if(!result.success) {
+    return res.status(400).json({
+        status: 'error',
+        message: 'Validation error',
+        errors: result.error
+    });
+}
+
+    const validatedResponse = result.data as Record<string, any>
+
+    req.body = validatedResponse.body || req.body;
+    req.query = validatedResponse.query || req.query;
+    req.params = validatedResponse.params || req.params;
+
+    next();
+};

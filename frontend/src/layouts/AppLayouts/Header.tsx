@@ -4,6 +4,7 @@ import {
   ArrowRightOnRectangleIcon,
 } from "@heroicons/react/24/outline";
 import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 type HeaderProps = {
   userName?: string;
@@ -17,6 +18,7 @@ export default function Header({
   avatarUrl,
   onEditProfile
 }: HeaderProps) {
+  const navigate = useNavigate();
   const { signOut } = useAuth() 
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -91,6 +93,7 @@ export default function Header({
             <button
               onClick={() => {
                 setOpen(false);
+                navigate('/edit', {replace: true});
               }}
               className="
                 group

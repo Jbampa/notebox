@@ -27,7 +27,7 @@ export const AuthContextProvider = ({children}: {children: ReactNode}) => {
     const fetchUser = useCallback(async () => {
         try {
             const response = await api.get('auth/validate');
-            setUser(response.data);
+            setUser(response.data.user);
             localStorage.setItem('user', JSON.stringify(response.data));
         }
         catch(err) {

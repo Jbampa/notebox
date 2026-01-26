@@ -6,6 +6,8 @@ import { createJwt } from "../../shared/utils/jwt";
 import fs from "fs/promises";
 import path from "path";
 import { v4 } from "uuid";
+import { unlink } from "fs";
+import { avatarToUrl } from "../../shared/utils/cover-to-url";
 
 export const encryptPassword = async (password: string) => {
     const hashPassword = hash(password, 8)
@@ -44,18 +46,25 @@ export const findUser = async (email: string) => {
 
 export const findUserById = async (id: number) => {
     const result = await prisma.user.findUnique({
-        where: { id: id },
-        select: {
-            id: true,
-            email: true,
-            name: true,
-            avatar: true,
-            createdAt: true,
-            updatedAt: true,
-        }
-    })
+    where: { id },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      avatar: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
 
-    return result;
+  if (!result) {
+    return null;
+  }
+
+  return {
+    ...result,
+    avatarUrl: result.avatar ? avatarToUrl(result.avatar) : null,
+  };
 }
 
 export const authenticateUser = async (email: string, password: string) => {
@@ -86,33 +95,76 @@ export const authenticateUser = async (email: string, password: string) => {
 type updateUserDTO = {
     userId: number,
     name?: string,
-    email?: string,
+    currentPassword?: string,
     password?: string
     avatar?: string
 }
 
-export const updateUser = async ({userId, name, email, password, avatar}: updateUserDTO) => {
-    const result = await prisma.user.update({
-        data: {
-            name,
-            email,
-            password,
-            avatar
-        },
-        where: {
-            id: userId
-        },
-        select: {
-            id: true,
-            name: true,
-            email: true,
-            avatar: true,
-            createdAt: true,
-        }
-    })
+export const updateUser = async ({
+  userId,
+  name,
+  currentPassword,
+  password,
+  avatar
+}: updateUserDTO) => {
 
-    return result;
-}
+  const user = await prisma.user.findUnique({
+    where: { id: userId }
+  });
+
+  if (!user) {
+    throw new AppError("User not found", 404);
+  }
+
+  const updateData: Prisma.UserUpdateInput = {};
+
+  if (password) {
+    if (!currentPassword) {
+      throw new AppError("Current password is required to set a new password", 400);
+    }
+
+    const isPasswordCorrect = await compare(currentPassword, user.password);
+
+    if (!isPasswordCorrect) {
+      throw new AppError("Current password does not match", 401);
+    }
+
+    updateData.password = await encryptPassword(password);
+  }
+
+  if (name) updateData.name = name;
+  
+  if (avatar) {
+    if (user.avatar) {
+      try {
+        const oldAvatarPath = path.resolve("./public/images/avatar", user.avatar);
+        await fs.unlink(oldAvatarPath);
+      } catch (err) {
+        console.warn("Could not delete old avatar, it might not exist.");
+      }
+    }
+    updateData.avatar = avatar;
+  }
+
+  // 6. Executa o Update no Prisma
+  const updatedUser = await prisma.user.update({
+    where: { id: userId },
+    data: updateData,
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      avatar: true,
+      createdAt: true,
+      updatedAt: true,
+    }
+  });
+
+  return {
+    ...updatedUser,
+    avatarUrl: updatedUser.avatar ? avatarToUrl(updatedUser.avatar) : null,
+  };
+};
 
 export const handleAvatar = async (file: Express.Multer.File) => {
     const allowed = ['image/jpg', 'image/jpeg', 'image/png'];

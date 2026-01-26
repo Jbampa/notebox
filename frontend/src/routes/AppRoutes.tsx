@@ -7,6 +7,7 @@ import { Profile } from "../pages/Profile";
 import { AppLayout } from "../layouts/AppLayouts/AppLayout";
 import { NotFound } from "../pages/NotFound";
 import { PublicRoute } from "./PublicRoute";
+import { AccountSettings } from "../pages/AccountSettings";
 
 
 export const AppRoutes = () => {
@@ -21,6 +22,7 @@ export const AppRoutes = () => {
                 <Route element={<AppLayout/>}>
                     <Route path='/profile' element={<Profile/>}/>
                     <Route path='/dashboard' element={<Dashboard/>}/>
+                    <Route path='/edit' element={<AccountSettings/>}/>
                 </Route>
             </Route>
             <Route path="*" element={<NotFound />} />
