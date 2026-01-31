@@ -6,7 +6,7 @@ import { avatarToUrl } from "../../shared/utils/cover-to-url";
 export const updateUserController: RequestHandler = async (req, res) => {
   try {
     const userId = (req.user as any).id;
-    const { name, email, password } = req.body;
+    const { name, currentPassword, password } = req.body;
 
     let avatar: string | undefined;
 
@@ -20,7 +20,7 @@ export const updateUserController: RequestHandler = async (req, res) => {
       avatar = uploadedAvatar;
     }
 
-    const result = await updateUser({ userId, name, password, avatar });
+    const result = await updateUser({ userId, name, currentPassword, password, avatar });
 
     return res.status(200).json({
       ...result,
@@ -30,7 +30,6 @@ export const updateUserController: RequestHandler = async (req, res) => {
     if (err instanceof AppError) {
       return res.status(err.statusCode).json({ err: err.message });
     }
-    console.log(err);
 
     return res.status(500).json({
       err: "An internal server error has occurred"

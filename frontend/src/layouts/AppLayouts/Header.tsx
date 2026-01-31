@@ -39,14 +39,14 @@ export default function Header({
   return (
     <header className="flex items-center justify-between h-12 px-2 bg-[#f5f5f7] border-b border-[#e6e6ea]">
       {/* Logo */}
-      <div className="px-2 font-semibold text-zinc-900">
+      <div className="px-2 font-semibold text-zinc-900 cursor-pointer" onClick={() => navigate('/')}>
         Notebox
       </div>
 
       {/* Right side */}
       <div className="relative flex items-center gap-3" ref={menuRef}>
-        <button className="text-sm text-zinc-600 hover:text-orange-600 transition-colors">
-          Go to boxes
+        <button className="text-sm text-zinc-600 hover:text-white hover:bg-orange-600 font-light transition-colors border-1 border-gray-400 p-2 rounded-sm">
+          BOXES
         </button>
 
         {/* Avatar */}

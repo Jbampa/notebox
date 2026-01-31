@@ -15,8 +15,6 @@ export const authSignupController: RequestHandler = async (req, res) => {
             },
         }
 
-        console.log(response);
-
         res.status(201).json({
             response
         })

@@ -5,6 +5,7 @@ import passport from 'passport';
 import { strategy } from './shared/utils/passport';
 import cors from 'cors';
 import { startPurgeDeletedNotesJob } from "./jobs/purgeDeletedNotes.job";
+import path from "path";
 
 const port = process.env.PORT
 
@@ -12,10 +13,15 @@ const server = express();
 
 server.use(cors());
 server.use(passport.initialize());
-server.use(helmet());
+server.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+  })
+);
 server.use(express.json());
 server.use(express.urlencoded({extended:true}));
-server.use(express.static('public'));
+server.use(express.static("public"));
+
 
 passport.use('jwt', strategy);
 

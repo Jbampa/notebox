@@ -5,4 +5,5 @@ export type User = {
     avatar: string | null;
     createdAt: string;
     updatedAt: string;
+    avatarUrl: string | null;
 }

@@ -19,7 +19,7 @@ export const updateUser = async ({ name, currentPassword, password, avatar }: {
     formData.append("avatar", avatar);
   }
 
-  const response = await api.patch('/user', formData, {
+  const response = await api.post('/user', formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
