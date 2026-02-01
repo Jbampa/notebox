@@ -8,22 +8,20 @@ import { useNavigate } from "react-router-dom";
 
 type HeaderProps = {
   userName?: string;
-  avatarUrl?: string | null;
-  onEditProfile?: () => void;
   onLogout?: () => void;
 };
 
 export default function Header({
   userName = "User",
-  avatarUrl,
-  onEditProfile
 }: HeaderProps) {
   const navigate = useNavigate();
   const { signOut } = useAuth() 
   const [open, setOpen] = useState(false);
+  const authUser =  useAuth()
+  const avatarUrl = authUser.user?.avatarUrl;
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const initial = userName.charAt(0).toUpperCase();
+  const initial = authUser.user?.name.charAt(0).toUpperCase();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -37,9 +35,9 @@ export default function Header({
   }, []);
 
   return (
-    <header className="flex items-center justify-between h-12 px-2 bg-[#f5f5f7] border-b border-[#e6e6ea]">
+    <header className="flex items-center justify-between h-18 px-2 bg-[#f5f5f7] border-b border-[#e6e6ea]">
       {/* Logo */}
-      <div className="px-2 font-semibold text-zinc-900 cursor-pointer" onClick={() => navigate('/')}>
+      <div className="px-2 text-2xl font-semibold text-zinc-900 cursor-pointer" onClick={() => navigate('/')}>
         Notebox
       </div>
 
@@ -53,7 +51,7 @@ export default function Header({
         <button
           onClick={() => setOpen((prev) => !prev)}
           className="
-            w-8 h-8
+            w-12 h-12
             rounded-full
             flex items-center justify-center
             overflow-hidden

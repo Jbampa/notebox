@@ -1,14 +1,22 @@
 import { RequestHandler } from "express";
-import { handleAvatar, updateUser } from "./user.service";
+import { handleAvatar, updateUser, findUserById } from "./user.service";
 import { AppError } from "../../errors/AppError";
 import { avatarToUrl } from "../../shared/utils/cover-to-url";
+import fs from "fs/promises";
+import path from "path";
 
 export const updateUserController: RequestHandler = async (req, res) => {
   try {
     const userId = (req.user as any).id;
-    const { name, currentPassword, password } = req.body;
+    const { name, currentPassword, password, removeAvatar } = req.body;
 
-    let avatar: string | undefined;
+    const user = await findUserById(userId);
+
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+
+    let avatar: string | null | undefined = undefined;
 
     if (req.file) {
       const uploadedAvatar = await handleAvatar(req.file);
@@ -17,14 +25,36 @@ export const updateUserController: RequestHandler = async (req, res) => {
         throw new AppError("Image not allowed", 400);
       }
 
+      if (user.avatar) {
+        const oldAvatarPath = path.resolve(
+          "public/images/avatar",
+          user.avatar
+        );
+
+        try {
+          await fs.unlink(oldAvatarPath);
+        } catch {
+        }
+      }
+
       avatar = uploadedAvatar;
     }
 
-    const result = await updateUser({ userId, name, currentPassword, password, avatar });
+    else if (removeAvatar === "true") {
+      avatar = null; 
+    }
+    
+    const result = await updateUser({
+      userId,
+      name,
+      currentPassword,
+      password,
+      avatar,
+    });
 
     return res.status(200).json({
       ...result,
-      avatarUrl: avatar ? avatarToUrl(avatar) : null
+      avatarUrl: result.avatar ? avatarToUrl(result.avatar) : null,
     });
   } catch (err) {
     if (err instanceof AppError) {
@@ -32,7 +62,7 @@ export const updateUserController: RequestHandler = async (req, res) => {
     }
 
     return res.status(500).json({
-      err: "An internal server error has occurred"
+      err: "An internal server error has occurred",
     });
   }
 };

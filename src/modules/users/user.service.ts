@@ -96,8 +96,8 @@ type updateUserDTO = {
     userId: number,
     name?: string,
     currentPassword?: string,
-    password?: string
-    avatar?: string
+    password?: string,
+    avatar?: string | null
 }
 
 export const updateUser = async ({
@@ -105,7 +105,7 @@ export const updateUser = async ({
   name,
   currentPassword,
   password,
-  avatar
+  avatar,
 }: updateUserDTO) => {
 
   const user = await prisma.user.findUnique({
@@ -134,7 +134,7 @@ export const updateUser = async ({
 
   if (name) updateData.name = name;
   
-  if (avatar) {
+  if (avatar !== undefined) {
     if (user.avatar) {
       try {
         const oldAvatarPath = path.resolve("./public/images/avatar", user.avatar);

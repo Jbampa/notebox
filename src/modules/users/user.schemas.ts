@@ -9,6 +9,7 @@ export const updateUserSchema = z.object({
     currentPassword: z.string().optional(),
     password: z.string().min(4, "New password is too short").optional(),
     avatar: z.any().optional(), 
+    removeAvatar: z.string().optional()
   })
   .strict()
   .refine((data) => {

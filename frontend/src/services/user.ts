@@ -2,11 +2,12 @@ import type { User } from "../types/user";
 import { api } from "./api"
 
 
-export const updateUser = async ({ name, currentPassword, password, avatar }: { 
+export const updateUser = async ({ name, currentPassword, password, avatar, removeAvatar }: { 
   name?: string; 
   currentPassword?: string; 
   password?: string; 
   avatar?: File | null; 
+  removeAvatar?: boolean;
 }): Promise<User> => {
   
   const formData = new FormData();
@@ -14,6 +15,9 @@ export const updateUser = async ({ name, currentPassword, password, avatar }: {
   if (name) formData.append("name", name);
   if (currentPassword) formData.append("currentPassword", currentPassword);
   if (password) formData.append("password", password);
+  if(removeAvatar === true) {
+    formData.append("removeAvatar", "true");
+  }
   
   if (avatar) {
     formData.append("avatar", avatar);
