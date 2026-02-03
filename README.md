@@ -6,6 +6,10 @@ Notebox currently focuses on **notes and folders**, with authentication, user pr
 
 ---
 
+<img width="1919" height="832" alt="image" src="https://github.com/user-attachments/assets/b0c2e0e7-2719-43f5-941b-7fd1b43616dd" />
+
+---
+
 ## CURRENT FEATURES
 
 - User authentication (JWT)
